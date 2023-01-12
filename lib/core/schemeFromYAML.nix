@@ -44,8 +44,8 @@ let
     in mapListToAttrs attrLine lines'';
 
   convertScheme = slug: set: {
-    name = set.scheme;
-    inherit (set) author;
+    # name = set.scheme;
+    # inherit (set) author;
     inherit slug;
     colors = {
       inherit (set)
