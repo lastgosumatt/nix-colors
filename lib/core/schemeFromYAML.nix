@@ -1,6 +1,7 @@
 let
   inherit (builtins)
-    elemAt filter listToAttrs substring replaceStrings stringLength genList;
+    length tail elemAt filter listToAttrs substring replaceStrings stringLength
+    genList;
 
   # All of these are borrowed from nixpkgs
   mapListToAttrs = f: l: listToAttrs (map f l);
@@ -38,9 +39,11 @@ let
           throw ''YAML parse failed: "${line}"''
         else
           nameValuePair (elemAt match 0) (parseString (elemAt match 1));
-      lines = splitString "\n" yaml;
-      lines' = map stripLine lines;
-      lines'' = filter usefulLine lines';
+      new-lines = splitString "\n" yaml;
+      lines = linen: if length linen > 17 then lines (tail linen) else linen;
+      lines' = lines new-lines;
+      lines-substring = map (substring 4 20) lines';
+      lines'' = filter usefulLine lines-substring;
     in mapListToAttrs attrLine lines'';
 
   convertScheme = slug: set: {
@@ -49,9 +52,8 @@ let
     inherit slug;
     colors = {
       inherit (set)
-        background foreground cursor color0 color1 color2 color3 color4 color5
-        color6 color7 color8 color9 color10 color11 color12 color13 color14
-        color15;
+        color0 color1 color2 color3 color4 color5 color6 color7 color8 color9
+        color10 color11 color12 color13 color14 color15;
     };
   };
 
